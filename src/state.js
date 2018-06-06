@@ -1,6 +1,8 @@
 import {createSelector} from 'reselect';
 import {capitalize, upperCaseUnderscore, upperCaseUnderScoreToCamel} from './utils';
 
+const IGNORE_METHODS = ["reduce", "addHandler", "reduceHandler"];
+
 export default class State {
   constructor(props) {
     const {key, state, types} = props;
@@ -42,9 +44,11 @@ export default class State {
     return handler ? handler(state, action) : state;
   };
 
-  reset = () => {
-    return { type: this.actionTypes.RESET }
-  };
+  reset = () => ({ type: this.actionTypes.RESET });
+
+  setState = (payload) => ({ type: this.actionTypes.SET_STATE, payload });
+
+  getState = (state) => state[this.stateKey];
 
   addHandler = (type, handler) => {
     const newHandlers = {...this._handlers, [type]: handler};
@@ -57,7 +61,17 @@ export default class State {
   };
 
   getActionCreators = () => {
-    
+    const result = {};
+
+    Object.keys(this).forEach(key => {
+      if(!key.match(/^(get|__)/) 
+        && !IGNORE_METHODS.includes(key)
+        && typeof this[key] === 'function') {
+        result[key] = this[key];
+      }
+    });
+
+    return result;
   };
 
   __createTypes = (types = []) => {
@@ -103,7 +117,6 @@ export default class State {
   };
 
   __createSetters = () => {
-    this.setState = (payload) => ({type: this.actionTypes.SET_STATE, payload});
     Object.keys(this.initialState).forEach(key => {
       // console.log(`State [${this.stateKey}] creating setter [set${capitalize(key)}]`);
       this[`set${capitalize(key)}`] = (value) => ({
@@ -114,7 +127,6 @@ export default class State {
   };
 
   __createGetters = () => {
-    this.getState = (state) => state[this.stateKey];
     Object.keys(this.initialState).forEach(key => {
       // console.log(`State [${this.stateKey}] creating getter [get${capitalize(key)}]`);
       this[`get${capitalize(key)}`] = createSelector(

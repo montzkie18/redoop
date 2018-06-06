@@ -140,4 +140,20 @@ describe("State", () => {
     })
 
   })
+
+  describe("#getActionCreators", () => {
+
+    it("returns reset and setState", () => {
+      const testState = new State({key: stateKey});
+      const actionCreators = testState.getActionCreators();
+      expect(actionCreators.reset).toBeInstanceOf(Function);
+      expect(actionCreators.setState).toBeInstanceOf(Function);
+    });
+
+    it("returns actions created from passed in types", () => {
+      const testState = new State({key: stateKey, types: ["ADD_TODO"]});
+      expect(testState.getActionCreators().addTodo).toBeInstanceOf(Function);
+    });
+
+  });
 })
