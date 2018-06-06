@@ -1,8 +1,8 @@
 {
   "name": "redoop",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Redux OOP class wrappers",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "build:lib": "babel src --out-dir lib",
     "build:umd": "cross-env NODE_ENV=development webpack src/index.js",
