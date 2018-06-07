@@ -53,10 +53,14 @@ const TodoList = ({todos, setTodos, text, setText, setState}) => (
   </div>
 );
 
-const todoState = new State("todos", {
+const todoState = new State({
+  // name for the redux state
+  key: "todos", 
   // define your initial state here
-  todos: [],
-  text: "",
+  state: {
+    todos: [],
+    text: "",
+  }
 });
 
 
